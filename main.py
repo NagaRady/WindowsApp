@@ -1,61 +1,45 @@
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow
 import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QWidget
 
-# Base window class
-class BaseWindow(QMainWindow):
+# Define a class for each sub-window
+class SubWindow(QWidget):
     def __init__(self, title):
         super().__init__()
-        self.setGeometry(200, 200, 300, 300)  # X, Y, Width, Height
         self.setWindowTitle(title)
+        self.setGeometry(100, 100, 300, 200)
         self.initUI()
-
+    
     def initUI(self):
-        # This method should be overridden in each subclass
-        pass
+        label = QLabel("This is the " + self.windowTitle() + ".", self)
+        label.move(50, 50)
 
-# First specific window
-class FirstWindow(BaseWindow):
+# Main Window class
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Main Window")
+        self.setGeometry(100, 100, 600, 400)
+        self.initUI()
+    
     def initUI(self):
-        label = QtWidgets.QLabel(self)
-        label.setText("This is the First Window!")
-        label.move(100, 130)
+        self.buttons = []
+        titles = ['Window 1', 'Window 2', 'Window 3', 'Window 4']
+        for i, title in enumerate(titles):
+            btn = QPushButton('Open ' + title, self)
+            btn.move(50, 50 + i*50)
+            btn.clicked.connect(self.make_show_window(title))
+            self.buttons.append(btn)
 
-# Second specific window
-class SecondWindow(BaseWindow):
-    def initUI(self):
-        label = QtWidgets.QLabel(self)
-        label.setText("This is the Second Window!")
-        label.move(100, 130)
-
-# Third specific window
-class ThirdWindow(BaseWindow):
-    def initUI(self):
-        label = QtWidgets.QLabel(self)
-        label.setText("This is the Third Window!")
-        label.move(100, 130)
-
-# Fourth specific window
-class FourthWindow(BaseWindow):
-    def initUI(self):
-        label = QtWidgets.QLabel(self)
-        label.setText("This is the Fourth Window!")
-        label.move(100, 130)
+    def make_show_window(self, title):
+        def show_window():
+            window = SubWindow(title)
+            window.show()
+        return show_window
 
 def main():
     app = QApplication(sys.argv)
-    
-    first = FirstWindow("First Window")
-    second = SecondWindow("Second Window")
-    third = ThirdWindow("Third Window")
-    fourth = FourthWindow("Fourth Window")
-
-    # Show all windows for demonstration
-    first.show()
-    second.show()
-    third.show()
-    fourth.show()
-
+    main_window = MainWindow()
+    main_window.show()
     sys.exit(app.exec_())
 
 if __name__ == "__main__":
