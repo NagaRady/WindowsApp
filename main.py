@@ -1,5 +1,6 @@
 import sys
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QDockWidget, QTextEdit, QListWidget, QMenuBar, QAction)
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDockWidget, QTextEdit, QListWidget, QMenuBar, QAction
+from PyQt5.QtCore import Qt  # This line was missing
 
 class MainWindow(QMainWindow):
     def __init__(self):
