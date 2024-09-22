@@ -1,6 +1,6 @@
 import sys
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QDockWidget, QTextEdit,
-                             QPushButton, QVBoxLayout, QWidget, QLabel)
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDockWidget, QTextEdit, QPushButton, QVBoxLayout, QWidget, QLabel
+from PyQt5.QtCore import Qt  # This is the missing import for Qt
 
 class MainWindow(QMainWindow):
     def __init__(self):
