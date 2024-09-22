@@ -1,7 +1,7 @@
 import sys
 import openai
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDockWidget, QTextEdit, QPushButton, QVBoxLayout, QWidget, QLabel
-from PyQt5.QtCore import Qt  # Import Qt for alignment and widget properties
+from PyQt5.QtCore import Qt
 
 class MainWindow(QMainWindow):
     def __init__(self, openai_key):
@@ -9,6 +9,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('Engineering Workflow Application with OpenAI')
         self.setGeometry(100, 100, 1200, 800)
         self.openai_key = openai_key
+        openai.api_key = self.openai_key  # Set the API key for the OpenAI client
         self.initUI()
 
     def initUI(self):
@@ -23,13 +24,13 @@ class MainWindow(QMainWindow):
         self.central_widget.setLayout(self.central_layout)
         self.setCentralWidget(self.central_widget)
 
-        # Initialize other widgets as before
+        # Initialize other widgets
         self.initialize_other_widgets()
 
     def initialize_other_widgets(self):
         # Dock Widget 1: Display and edit the logic flow
         self.dock_flow = QDockWidget("Algorithm Flow", self)
-        self.dock_flow_widget = QWidget()
+        self.dock_flow_widget = QWidget()  # Parent widget for layout
         self.dock_flow_layout = QVBoxLayout()
         self.flow_text_edit = QTextEdit()
         self.generate_code_button = QPushButton('Generate Code')
@@ -39,16 +40,14 @@ class MainWindow(QMainWindow):
         self.dock_flow_widget.setLayout(self.dock_flow_layout)
         self.dock_flow.setWidget(self.dock_flow_widget)
         self.addDockWidget(Qt.RightDockWidgetArea, self.dock_flow)
-        
-        # Initialize Dock Widget 2 and 3 as before
-        self.init_dock_widget_2_and_3()
 
-    def init_dock_widget_2_and_3(self):
+        # Dock Widget 2: Display generated code
         self.dock_code = QDockWidget("Generated Code", self)
         self.dock_code_widget = QTextEdit()
         self.dock_code.setWidget(self.dock_code_widget)
         self.addDockWidget(Qt.RightDockWidgetArea, self.dock_code)
-        
+
+        # Dock Widget 3: Placeholder for future functionalities
         self.dock_placeholder = QDockWidget("Additional Tools", self)
         self.dock_placeholder_widget = QLabel("Future functionalities can be added here.")
         self.dock_placeholder.setWidget(self.dock_placeholder_widget)
@@ -56,13 +55,14 @@ class MainWindow(QMainWindow):
 
     def generate_flow_with_openai(self):
         prompt = self.chat_box.toPlainText()
-        response = openai.Completion.create(
-            engine="davinci-codex",
-            prompt=prompt,
-            max_tokens=150,
-            api_key=self.openai_key
-        )
-        self.flow_text_edit.setText(response.choices[0].text.strip())
+        try:
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": prompt}]
+            )
+            self.flow_text_edit.setText(response['choices'][0]['message']['content'])
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
     def generate_code(self):
         code = "Generated code from the flow:\n\n" + self.flow_text_edit.toPlainText()
@@ -70,8 +70,7 @@ class MainWindow(QMainWindow):
 
 def main():
     app = QApplication(sys.argv)
-    # Insert your OpenAI API Key here
-    openai_key = "sk-BJZLFlNC4is10LTrNflQjLZd-8oXdR1vR07gCxcaNcT3BlbkFJWicqXw4iH3d_C3lGXPXAAK3JoxWqrMyxlkY4W2KmQA"
+    openai_key = "sk-BJZLFlNC4is10LTrNflQjLZd-8oXdR1vR07gCxcaNcT3BlbkFJWicqXw4iH3d_C3lGXPXAAK3JoxWqrMyxlkY4W2KmQA"  # Replace with your actual OpenAI API key
     main_window = MainWindow(openai_key)
     main_window.show()
     sys.exit(app.exec_())
