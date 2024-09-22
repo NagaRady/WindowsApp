@@ -13,7 +13,7 @@ class MainWindow(QMainWindow):
         self.initUI()
 
     def initUI(self):
-        # Central Widget: Chat Box for discussion and generating flow
+        # Central Widget setup
         self.central_widget = QWidget()
         self.central_layout = QVBoxLayout()
         self.chat_box = QTextEdit()
@@ -23,14 +23,13 @@ class MainWindow(QMainWindow):
         self.central_layout.addWidget(self.generate_flow_button)
         self.central_widget.setLayout(self.central_layout)
         self.setCentralWidget(self.central_widget)
-
         # Initialize other widgets
         self.initialize_other_widgets()
 
     def initialize_other_widgets(self):
-        # Dock Widget 1: Display and edit the logic flow
+        # Setup for dock widgets
         self.dock_flow = QDockWidget("Algorithm Flow", self)
-        self.dock_flow_widget = QWidget()  # Parent widget for layout
+        self.dock_flow_widget = QWidget()  
         self.dock_flow_layout = QVBoxLayout()
         self.flow_text_edit = QTextEdit()
         self.generate_code_button = QPushButton('Generate Code')
@@ -41,36 +40,37 @@ class MainWindow(QMainWindow):
         self.dock_flow.setWidget(self.dock_flow_widget)
         self.addDockWidget(Qt.RightDockWidgetArea, self.dock_flow)
 
-        # Dock Widget 2: Display generated code
         self.dock_code = QDockWidget("Generated Code", self)
         self.dock_code_widget = QTextEdit()
         self.dock_code.setWidget(self.dock_code_widget)
         self.addDockWidget(Qt.RightDockWidgetArea, self.dock_code)
 
-        # Dock Widget 3: Placeholder for future functionalities
         self.dock_placeholder = QDockWidget("Additional Tools", self)
         self.dock_placeholder_widget = QLabel("Future functionalities can be added here.")
         self.dock_placeholder.setWidget(self.dock_placeholder_widget)
         self.addDockWidget(Qt.RightDockWidgetArea, self.dock_placeholder)
 
     def generate_flow_with_openai(self):
-        prompt = self.chat_box.toPlainText()
+        # Function to generate flow using OpenAI
+        prompt = "Create a pseudocode algorithm to: " + self.chat_box.toPlainText()
         try:
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=[{"role": "user", "content": prompt}]
             )
-            self.flow_text_edit.setText(response['choices'][0]['message']['content'])
+            algorithm = response.choices[0].message['content'] if response.choices[0].message else "No response generated."
+            self.flow_text_edit.setText(algorithm)
         except Exception as e:
             print(f"An error occurred: {e}")
 
     def generate_code(self):
+        # Function to simulate code generation
         code = "Generated code from the flow:\n\n" + self.flow_text_edit.toPlainText()
         self.dock_code_widget.setText(code)
 
 def main():
     app = QApplication(sys.argv)
-    openai_key = "sk-BJZLFlNC4is10LTrNflQjLZd-8oXdR1vR07gCxcaNcT3BlbkFJWicqXw4iH3d_C3lGXPXAAK3JoxWqrMyxlkY4W2KmQA"  # Replace with your actual OpenAI API key
+    openai_key = "your_openai_api_key_here"
     main_window = MainWindow(openai_key)
     main_window.show()
     sys.exit(app.exec_())
