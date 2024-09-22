@@ -6,7 +6,7 @@ from PyQt5.QtCore import Qt
 class MainWindow(QMainWindow):
     def __init__(self, openai_key):
         super().__init__()
-        self.setWindowTitle('Engineering Workflow Application with OpenAI')
+        self.setWindowTitle('Brainstorm with AI')
         self.setGeometry(100, 100, 1200, 800)
         self.openai_key = openai_key
         openai.api_key = self.openai_key  # Set the API key for the OpenAI client
@@ -17,7 +17,7 @@ class MainWindow(QMainWindow):
         self.central_widget = QWidget()
         self.central_layout = QVBoxLayout()
         self.chat_box = QTextEdit()
-        self.generate_flow_button = QPushButton('Generate Flow with OpenAI')
+        self.generate_flow_button = QPushButton('Generate Code Flow')
         self.generate_flow_button.clicked.connect(self.generate_flow_with_openai)
         self.central_layout.addWidget(self.chat_box)
         self.central_layout.addWidget(self.generate_flow_button)
@@ -26,9 +26,10 @@ class MainWindow(QMainWindow):
         # Initialize other widgets
         self.initialize_other_widgets()
 
+
     def initialize_other_widgets(self):
         # Setup for dock widgets
-        self.dock_flow = QDockWidget("Algorithm Flow", self)
+        self.dock_flow = QDockWidget("Code Flow", self)
         self.dock_flow_widget = QWidget()  
         self.dock_flow_layout = QVBoxLayout()
         self.flow_text_edit = QTextEdit()
@@ -52,7 +53,8 @@ class MainWindow(QMainWindow):
 
     def generate_flow_with_openai(self):
         # Function to generate flow using OpenAI
-        prompt = "Create a pseudocode algorithm to: " + self.chat_box.toPlainText()
+        task_description = self.chat_box.toPlainText()
+        prompt = f"Write a detailed algorithm in pseudocode to accomplish the following task: {task_description}"
         try:
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
