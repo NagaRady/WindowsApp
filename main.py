@@ -13,7 +13,6 @@ class MainWindow(QMainWindow):
         self.initUI()
 
     def initUI(self):
-        # Central Widget setup
         self.central_widget = QWidget()
         self.central_layout = QVBoxLayout()
         self.chat_box = QTextEdit()
@@ -23,12 +22,9 @@ class MainWindow(QMainWindow):
         self.central_layout.addWidget(self.generate_flow_button)
         self.central_widget.setLayout(self.central_layout)
         self.setCentralWidget(self.central_widget)
-        # Initialize other widgets
         self.initialize_other_widgets()
 
-
     def initialize_other_widgets(self):
-        # Setup for dock widgets
         self.dock_flow = QDockWidget("Code Flow", self)
         self.dock_flow_widget = QWidget()  
         self.dock_flow_layout = QVBoxLayout()
@@ -52,27 +48,27 @@ class MainWindow(QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.dock_placeholder)
 
     def generate_flow_with_openai(self):
-        # Function to generate flow using OpenAI
         task_description = self.chat_box.toPlainText()
-        prompt = f"Write a detailed algorithm in pseudocode to accomplish the following task: {task_description}"
+        prompt = f"Write a detailed pseudocode algorithm to accomplish the following task: {task_description}"
         try:
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[{"role": "user", "content": prompt}]
+            response = openai.Completion.create(
+                model="code-davinci-002",
+                prompt=prompt,
+                max_tokens=150,
+                temperature=0.7
             )
-            algorithm = response.choices[0].message['content'] if response.choices[0].message else "No response generated."
+            algorithm = response.choices[0].text.strip() if response.choices else "No algorithm could be generated."
             self.flow_text_edit.setText(algorithm)
         except Exception as e:
             print(f"An error occurred: {e}")
 
     def generate_code(self):
-        # Function to simulate code generation
         code = "Generated code from the flow:\n\n" + self.flow_text_edit.toPlainText()
         self.dock_code_widget.setText(code)
 
 def main():
     app = QApplication(sys.argv)
-    openai_key = "sk-BJZLFlNC4is10LTrNflQjLZd-8oXdR1vR07gCxcaNcT3BlbkFJWicqXw4iH3d_C3lGXPXAAK3JoxWqrMyxlkY4W2KmQA"
+    openai_key = "your_openai_api_key_here"  # Ensure to replace with your actual API key
     main_window = MainWindow(openai_key)
     main_window.show()
     sys.exit(app.exec_())
