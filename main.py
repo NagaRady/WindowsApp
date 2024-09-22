@@ -70,7 +70,7 @@ class MainWindow(QMainWindow):
 
 def main():
     app = QApplication(sys.argv)
-    openai_key = "your_openai_api_key_here"
+    openai_key = "sk-BJZLFlNC4is10LTrNflQjLZd-8oXdR1vR07gCxcaNcT3BlbkFJWicqXw4iH3d_C3lGXPXAAK3JoxWqrMyxlkY4W2KmQA"
     main_window = MainWindow(openai_key)
     main_window.show()
     sys.exit(app.exec_())
