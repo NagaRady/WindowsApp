@@ -1,6 +1,6 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDockWidget, QTextEdit, QPushButton, QVBoxLayout, QWidget, QLabel
-from PyQt5.QtCore import Qt  # This is the missing import for Qt
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDockWidget, QTextEdit, QPushButton, QVBoxLayout, QWidget, QLabel, QHBoxLayout
+from PyQt5.QtCore import Qt  # Import Qt for alignment and widget properties
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -23,7 +23,14 @@ class MainWindow(QMainWindow):
 
         # Dock Widget 1: Display and edit the logic flow
         self.dock_flow = QDockWidget("Algorithm Flow", self)
-        self.dock_flow_widget = QTextEdit()
+        self.dock_flow_widget = QWidget()  # Parent widget for layout
+        self.dock_flow_layout = QVBoxLayout()
+        self.flow_text_edit = QTextEdit()
+        self.generate_code_button = QPushButton('Generate Code')
+        self.generate_code_button.clicked.connect(self.generate_code)
+        self.dock_flow_layout.addWidget(self.flow_text_edit)
+        self.dock_flow_layout.addWidget(self.generate_code_button)
+        self.dock_flow_widget.setLayout(self.dock_flow_layout)
         self.dock_flow.setWidget(self.dock_flow_widget)
         self.addDockWidget(Qt.RightDockWidgetArea, self.dock_flow)
 
@@ -40,10 +47,14 @@ class MainWindow(QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.dock_placeholder)
 
     def generate_flow(self):
-        # Example function to handle logic flow generation
+        # Function to handle logic flow generation based on chat input
         logic_flow = "Algorithm or logic flow based on discussion: " + self.chat_box.toPlainText()
-        self.dock_flow_widget.setText(logic_flow)
-        self.dock_code_widget.setText("Generated code based on the flow will appear here.")
+        self.flow_text_edit.setText(logic_flow)
+
+    def generate_code(self):
+        # Function to generate code from the flow
+        code = "Generated code from the flow:\n\n" + self.flow_text_edit.toPlainText()
+        self.dock_code_widget.setText(code)
 
 def main():
     app = QApplication(sys.argv)
