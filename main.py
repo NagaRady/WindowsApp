@@ -1,46 +1,49 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDockWidget, QTextEdit, QListWidget, QMenuBar, QAction
-from PyQt5.QtCore import Qt  # This line was missing
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QDockWidget, QTextEdit,
+                             QPushButton, QVBoxLayout, QWidget, QLabel)
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle('My RStudio-like App')
-        self.setGeometry(100, 100, 800, 600)
+        self.setWindowTitle('Engineering Workflow Application')
+        self.setGeometry(100, 100, 1200, 800)
         self.initUI()
 
     def initUI(self):
-        # Central widget (text editor)
-        self.central_widget = QTextEdit()
+        # Central Widget: Chat Box for discussion and generating flow
+        self.central_widget = QWidget()
+        self.central_layout = QVBoxLayout()
+        self.chat_box = QTextEdit()
+        self.generate_flow_button = QPushButton('Generate Flow')
+        self.generate_flow_button.clicked.connect(self.generate_flow)
+        self.central_layout.addWidget(self.chat_box)
+        self.central_layout.addWidget(self.generate_flow_button)
+        self.central_widget.setLayout(self.central_layout)
         self.setCentralWidget(self.central_widget)
 
-        # Dock Widget 1: Console
-        self.dock_console = QDockWidget("Console", self)
-        self.dock_console_widget = QTextEdit()
-        self.dock_console.setWidget(self.dock_console_widget)
-        self.addDockWidget(Qt.BottomDockWidgetArea, self.dock_console)
+        # Dock Widget 1: Display and edit the logic flow
+        self.dock_flow = QDockWidget("Algorithm Flow", self)
+        self.dock_flow_widget = QTextEdit()
+        self.dock_flow.setWidget(self.dock_flow_widget)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.dock_flow)
 
-        # Dock Widget 2: Environment/History
-        self.dock_env = QDockWidget("Environment/History", self)
-        self.dock_env_widget = QListWidget()
-        self.dock_env.setWidget(self.dock_env_widget)
-        self.addDockWidget(Qt.RightDockWidgetArea, self.dock_env)
+        # Dock Widget 2: Display generated code
+        self.dock_code = QDockWidget("Generated Code", self)
+        self.dock_code_widget = QTextEdit()
+        self.dock_code.setWidget(self.dock_code_widget)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.dock_code)
 
-        # Dock Widget 3: Files/Plots/Help/Viewer
-        self.dock_files = QDockWidget("Files/Plots", self)
-        self.dock_files_widget = QListWidget()
-        self.dock_files.setWidget(self.dock_files_widget)
-        self.addDockWidget(Qt.RightDockWidgetArea, self.dock_files)
+        # Dock Widget 3: Placeholder for future functionalities
+        self.dock_placeholder = QDockWidget("Additional Tools", self)
+        self.dock_placeholder_widget = QLabel("Future functionalities can be added here.")
+        self.dock_placeholder.setWidget(self.dock_placeholder_widget)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.dock_placeholder)
 
-        # Creating a menu bar
-        menubar = self.menuBar()
-        file_menu = menubar.addMenu('File')
-        view_menu = menubar.addMenu('View')
-
-        # Adding actions to menus
-        exit_action = QAction('Exit', self)
-        exit_action.triggered.connect(self.close)
-        file_menu.addAction(exit_action)
+    def generate_flow(self):
+        # Example function to handle logic flow generation
+        logic_flow = "Algorithm or logic flow based on discussion: " + self.chat_box.toPlainText()
+        self.dock_flow_widget.setText(logic_flow)
+        self.dock_code_widget.setText("Generated code based on the flow will appear here.")
 
 def main():
     app = QApplication(sys.argv)
